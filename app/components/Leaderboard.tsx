@@ -39,7 +39,7 @@ export default function Leaderboard({ onBack }: { onBack: () => void }) {
     <div className="bg-white bg-opacity-10 backdrop-filter backdrop-blur-lg rounded-lg p-8">
       <h2 className="text-3xl font-bold text-white mb-6">Meilleur score</h2>
       {session ? loading ? (
-        <ul className="space-y-4 mb-6 max-h-40 overflow-scroll">
+        <ul className="space-y-4 mb-6 max-h-52 overflow-scroll">
           {leaderboard.map((entry, index) => (
             <li key={index} className="flex justify-between items-center text-white">
               <div className="flex items-center space-x-4">

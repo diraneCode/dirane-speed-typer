@@ -8,7 +8,6 @@ export async function GET() {
     const leaderboard = await db.collection('users')
       .find({}, { projection: { _id: 0, email: 1, nom: 1, image: 1, score: 1 } })
       .sort({ score: -1 })
-      .limit(10)
       .toArray();
 
     return NextResponse.json(leaderboard);

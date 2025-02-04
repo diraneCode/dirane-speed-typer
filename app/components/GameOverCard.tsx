@@ -1,7 +1,8 @@
+'use client'
+
 import { motion } from "framer-motion";
 import { useSession } from "next-auth/react";
 import { useEffect } from "react";
-import ShowLeaderboard from "./ShowLeaderboard";
 import { Button } from "@/components/ui/button";
 
 
@@ -81,7 +82,9 @@ export default function GameOverCard({ score, level, wordsPerMinute, onRestart, 
         >
           Partager sur WhatsApp
         </Button>
-        <ShowLeaderboard />
+        <Button onClick={() => location.reload()} className="w-full py-2 px-4 bg-black hover:bg-black/80 rounded-md text-white font-semibold transition-colors">
+              Meilleur score
+          </Button>
 
       </div>
     </motion.div>

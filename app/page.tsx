@@ -151,7 +151,7 @@ export default function Home() {
     <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-purple-400 to-indigo-600 p-4 overflow-hidden">
       <Navbar />
       <div className="relative w-full max-w-md">
-        <div className="w-full h-full absolute -top-20 left-1/2">
+        <div className="w-full h-full absolute -top-20 left-[40%]">
           <Image src={'/cochon.png'} alt="cochon" width={100} height={100} />
           <div className="w-20 p-5 bg-white/50"></div>
           <div className="w-fit p-2 bg-white/50 absolute top-2 left-20 rounded-t-2xl rounded-r-2xl">

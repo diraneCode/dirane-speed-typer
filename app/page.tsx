@@ -148,7 +148,7 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-purple-400 to-indigo-600 p-4">
+    <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-purple-400 to-indigo-600 p-4 overflow-hidden">
       <Navbar />
       <div className="relative w-full max-w-md">
         <div className="w-full h-full absolute -top-20 left-1/2">

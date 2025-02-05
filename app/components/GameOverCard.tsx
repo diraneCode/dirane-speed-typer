@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 import { useSession } from "next-auth/react";
 import { useEffect } from "react";
 import { Button } from "@/components/ui/button";
-
+import * as Icon from 'react-icons/fa'
 
 
 type GameOverCardProps = {
@@ -18,6 +18,7 @@ type GameOverCardProps = {
 export default function GameOverCard({ score, level, wordsPerMinute, onRestart, onShareWhatsApp }: GameOverCardProps) {
   const { data: session } = useSession();
 
+  
   useEffect(() => {
     if (session?.user?.email) {
       const saveScore = async () => {
@@ -58,7 +59,7 @@ export default function GameOverCard({ score, level, wordsPerMinute, onRestart, 
       className="bg-gradient-to-br from-indigo-500 to-purple-600 rounded-lg p-8 text-center shadow-lg"
     >
       <h2 className="text-4xl font-bold text-white mb-6">Game Over!</h2>
-      <div className="space-y-4 mb-6">
+      <div className="space-y-4 mb-4">
         <p className="text-2xl text-white">
           Score: <span className="font-bold">{score}</span>
         </p>
@@ -72,19 +73,19 @@ export default function GameOverCard({ score, level, wordsPerMinute, onRestart, 
       <div className="space-y-4">
         <Button
           onClick={onRestart}
-          className="w-full text-lg py-3 bg-white text-indigo-600 hover:bg-indigo-100 transition-colors duration-300"
+          className="w-full font-semibold py-2 bg-white text-indigo-600 hover:bg-indigo-100 transition-colors duration-300"
         >
           Réessayer
         </Button>
         <Button
           onClick={onShareWhatsApp}
-          className="w-full text-lg py-3 bg-green-500 text-white hover:bg-green-600 transition-colors duration-300"
+          className="w-full font-semibold py-2 bg-green-500 text-white hover:bg-green-600 transition-colors duration-300"
         >
-          Partager sur WhatsApp
+          <Icon.FaWhatsapp /> Partager sur WhatsApp
         </Button>
-        <Button onClick={() => location.reload()} className="w-full py-2 px-4 bg-black hover:bg-black/80 rounded-md text-white font-semibold transition-colors">
-              Meilleur score
-          </Button>
+        <Button onClick={() => location.reload()} className="w-full py-2  bg-black/80 hover:bg-black rounded-md text-white font-semibold transition-colors">
+          Retour
+        </Button>
 
       </div>
     </motion.div>

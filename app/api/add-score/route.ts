@@ -11,11 +11,25 @@ export async function POST(request: Request) {
   }
 
   const db = await connectToDatabase();
-  await db.collection('users').updateOne(
-    { email, nom, image },
-    { $set: { score } },
-    { upsert: true }
-  );
+  const usersCollection = db.collection('users');
 
-  return NextResponse.json({ message: 'Score added successfully' });
+  // Vérification si l'utilisateur existe déjà
+  const existingUser = await usersCollection.findOne({ email });
+
+  if (existingUser) {
+    if (score > existingUser.score) {
+      // Met à jour si le nouveau score est supérieur
+      await usersCollection.updateOne(
+        { email },
+        { $set: { score } }
+      );
+      return NextResponse.json({ message: 'Score updated successfully' });
+    } else {
+      return NextResponse.json({ message: 'Existing score is higher or equal, no update performed' });
+    }
+  } else {
+    // Insère un nouvel utilisateur
+    await usersCollection.insertOne({ email, nom, image, score });
+    return NextResponse.json({ message: 'Score added successfully' });
+  }
 }

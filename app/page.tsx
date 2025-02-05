@@ -11,9 +11,10 @@ import GameOverCard from "./components/GameOverCard";
 import Leaderboard from "./components/Leaderboard";
 import useSound from "use-sound";
 import { useSession } from "next-auth/react";
-import { words } from "./const/WORD";
+import { categorizedWords } from "./const/WORD";
 import Navbar from "./components/Navbar";
 import Image from "next/image";
+import { Button } from "@/components/ui/button";
 
 const levels = [
   { name: "E", timeLimit: 10, wordsToPass: 5 },
@@ -23,9 +24,18 @@ const levels = [
   { name: "A", timeLimit: 6, wordsToPass: 25 },
 ];
 
-const generateWord = () => {
+const generateWord = (categorie: string) => {
 
-  return words[Math.floor(Math.random() * words.length)];
+  if(categorie == "Informatique"){
+    const word = categorizedWords[0].words
+    return word[Math.floor(Math.random() * word.length)];    
+  }else if(categorie == "Sport"){
+    const word = categorizedWords[1].words    
+    return word[Math.floor(Math.random() * word.length)];    
+  }else{
+    const word = categorizedWords[2].words
+    return word[Math.floor(Math.random() * word.length)];    
+  }
 };
 
 export default function Home() {
@@ -49,11 +59,14 @@ export default function Home() {
   const [playTimerWarning] = useSound("/sounds/timer-warning.mp3", { volume: 0.5 });
   const [playGameOver] = useSound("/sounds/game-over.mp3");
 
+  const [wordChoice, setWordChoice] = useState(false)
+  const [wordChoiceSelect, setWordChoiceSelect] = useState<string>("")
+
   const startGame = useCallback(() => {
     setIsPlaying(true);
     setScore(0);
     setTimeLeft(levels[0].timeLimit);
-    setCurrentWord(generateWord());
+    setCurrentWord(generateWord(wordChoiceSelect));
     setLevel(0);
     setGameOver(false);
     setStartTime(Date.now());
@@ -77,7 +90,7 @@ export default function Home() {
       setScore((prevScore) => prevScore + 1);
       setWordsTyped((prev) => prev + 1);
       setTimeLeft(levels[level].timeLimit);
-      setCurrentWord(generateWord());
+      setCurrentWord(generateWord(wordChoiceSelect));
       setInput("");
       setFeedback(["Bravo!", "Super!", "Waouh!"][Math.floor(Math.random() * 3)]);
 
@@ -131,6 +144,11 @@ export default function Home() {
     playKeyPress();
   };
 
+  const playGame = (categorie: string) => {
+    setWordChoiceSelect(categorie)
+    startGame()
+  }
+
   // Capture d'écran avec l'API displayMedia
   const handleCaptureScreen = () => {
     navigator.mediaDevices
@@ -154,29 +172,42 @@ export default function Home() {
         <div className="w-full h-full absolute -top-20 left-[40%]">
           <Image src={'/cochon.png'} alt="cochon" width={100} height={100} />
           <div className="w-20 p-5 bg-white/50"></div>
-          <div className="w-fit p-2 bg-white/50 absolute top-2 left-20 rounded-t-2xl rounded-r-2xl">
-            {!isPlaying ? <span className="text-lg text-white font-bold">Viens jouer 👋</span> : <AnimatePresence>
+          <div className={`w-fit p-2 ${gameOver ? "bg-red-600/80" : "bg-white/50"} absolute top-2 left-20 rounded-t-2xl rounded-r-2xl`}>
+            {!isPlaying ? gameOver ? <span className="text-lg text-white font-bold">Tu es trop nul🤣🤣</span> : <span className="text-lg text-white font-bold">Viens jouer 👋</span> : <AnimatePresence>
               {feedback && isPlaying && firstWordTyped && <FeedbackMessage key={feedback} message={feedback} />}
             </AnimatePresence>}
           </div>
         </div>
         {!showLeaderboard ? (
-          <div className="p-8 rounded-xl backdrop-filter backdrop-blur-lg bg-white bg-opacity-10 shadow-xl border border-opacity-20 border-white">
-            <h1 className="text-4xl font-bold text-white text-center mb-6">Dirane`s Typer</h1>
+          <div className={`${gameOver ? "p-0 border-none" : "p-8"} rounded-xl backdrop-filter backdrop-blur-lg bg-white bg-opacity-10 shadow-xl border border-opacity-20 border-white`}>
+            {!gameOver && <h1 className="text-4xl font-bold text-white text-center mb-6">Dirane`s Typer</h1>}
             {!isPlaying && !gameOver ? (
               <div className="space-y-4">
-                <button
-                  onClick={startGame}
-                  className="w-full py-2 px-4 bg-indigo-600 hover:bg-indigo-700 rounded-md text-white font-semibold transition-colors"
-                >
-                  Jouer
-                </button>
-                <button
-                  onClick={() => setShowLeaderboard(true)}
-                  className="w-full py-2 px-4 bg-purple-600 hover:bg-purple-700 rounded-md text-white font-semibold transition-colors"
-                >
-                  Meilleur score
-                </button>
+                {wordChoice && (<div className="space-y-4">
+                  <h2 className="text-2xl font-bold text-white mb-6 text-center">Choisis une catégorie de mot</h2>
+                  <Button onClick={() => playGame("Informatique")} className="w-full text-center text-white bg-pink-500 hover:bg-pink-600">Informatique</Button>
+                  <Button onClick={() => playGame("Sport")} className="w-full text-center text-white bg-yellow-500 hover:bg-yellow-600">Sport</Button>
+                  <Button onClick={() => playGame("Animé")} className="w-full text-center text-white bg-sky-500 hover:bg-sky-600">Animé</Button>
+                  <Button onClick={() => setWordChoice(false)} className="w-full">Retour</Button>
+                </div>)}
+                {!wordChoice && (
+                  <div className="space-y-4">
+                    <button
+                      // onClick={startGame}
+                      onClick={() => setWordChoice(true)}
+                      className="w-full py-2 px-4 bg-indigo-600 hover:bg-indigo-700 rounded-md text-white font-semibold transition-colors"
+                    >
+                      Jouer
+                    </button>
+                    <button
+                      onClick={() => setShowLeaderboard(true)}
+                      className="w-full py-2 px-4 bg-purple-600 hover:bg-purple-700 rounded-md text-white font-semibold transition-colors"
+                    >
+                      Meilleur score
+                    </button>
+                    {!session && <div className="text-white text-center text-sm">Connecte toi pour partager ton score ☺️</div>}
+                  </div>
+                )}
               </div>
             ) : isPlaying ? (
               <>
@@ -197,7 +228,7 @@ export default function Home() {
                   level={levels[level].name}
                   wordsPerMinute={Math.round((wordsTyped / ((Date.now() - startTime) / 60000)) * 100) / 100}
                   onRestart={startGame}
-                  onShareWhatsApp={handleCaptureScreen} // Capture d'écran
+                  onShareWhatsApp={handleCaptureScreen}
                 />
               </div>
             )}
